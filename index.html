@@ -1,0 +1,179 @@
+
+<!doctype html>
+
+<!-- O exercício consiste em refatorar o método registerProduct para que ele cadastre corretamente os produtos na "base de dados" prodDataBase-->
+<!-- O método registerProduct refatorado pode ser inserido pelo Console do Dev-Tools mesmo, imagine que se trata da seguinte história:-->
+<!-- Sabe-se que esta página está quebrando, e nós devemos propor uma solução já testada. Dessa forma, testaremos nossa implementação utilizando o Console do Dev-Tools, para que possamos enviar a proposta de solução para o caso.-->
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="robots" content="noindex">
+    <title>Products</title>
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TZRHVZC');</script>
+    <!-- End Google Tag Manager -->
+
+    <!-- Estilos para o formulário de registros -->
+    <style>
+      table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+      }
+      
+      td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+      
+      tr:nth-child(even) {
+        background-color: #dddddd;
+      }
+    </style>
+
+    <!-- Estilos para a impressão de produtos registrados -->
+    <style>
+        .prod_box{
+            float:left;
+            border:1px solid #888;
+            padding: 5px;
+            margin: 5px;
+            width: 300px;
+            height: 300px;
+        }
+        .prod_box img{
+            margin-left: 50px;
+        }
+        .prod_box:hover{
+            background-color: #eee;
+        }
+    </style>
+
+    <script>
+      const prodDataBase = {
+        products: {
+          "http://banheiro.c1.biz/ecommerce/product.php?prod=12": { //Yep, utilizei o link como chave. Alterem se preferirem.
+            name: "Pato de Borracha",
+            //originalPrice: 5.99,
+            //salePrice: 5.99,
+            price: 5.99,
+            //category: ["Higiene", "Pessoal", "Banho"],
+            imageURL: "http://cultura.estadao.com.br/blogs/ricardo-lombardi/wp-content/uploads/sites/103/2011/11/duck.jpg",
+            productURL: "http://banheiro.c1.biz/ecommerce/product.php?prod=12"
+          }
+        }
+      };
+    </script>
+
+  </head>
+
+  <body>
+      <h1>Veja o fonte para ler a descrição (primeiras 5 linhas)</h1>
+      <br><br>
+      <section id="registerSection">
+        <form action="" onsubmit="registerProduct()" id="regProduct">
+
+          <table>
+            <tr>
+              <th>Nome do Campo</th>
+              <th>Valor do Campo</th>
+            </tr>
+            <tr>
+              <td>Nome</td>
+              <th><input type="text" name="name"></th>
+            </tr>
+            <tr>
+              <td>Preço</td>
+              <th><input type="text" name="price"></th>
+            </tr>
+            <tr>
+              <td>URL da Imagem</td>
+              <th><input type="text" name="imageURL"></th>
+            </tr>
+            <tr>
+              <td>URL do Produto</td>
+              <th><input type="text" name="productURL"></th>
+            </tr>
+          </table>
+
+          <button type="submit">Cadastrar</button>
+        </form>
+      </section>
+
+      <script>
+        //Bloqueia a mudança de página após o envio do formulário que registra o produto
+        document.querySelector("#regProduct").addEventListener("submit", function(evt) {
+          evt.preventDefault();
+        });
+      </script>
+
+      <script>
+          function registerProduct() { //ToDo: altere para a sua versão pelo console
+            const form = document.querySelector("#regProduct");
+            //grava novo produto na variável newprod
+            let nome = form.querySelector("input[name='productURL']").value;
+            
+            let newprod = { 
+            [nome]:{
+              name: form.querySelector("input[name='name']").value, 
+              price: form.querySelector("input[name='price']").value,
+              imageURL: form.querySelector("input[name='imageURL']").value,
+              productURL: form.querySelector("input[name='productURL']").value
+            }};
+            console.log("prod submitted:", JSON.stringify(newprod, null, 2)); //printa no console 
+            //Salva novo produto na variável prodDataBase
+            
+            Object.assign(prodDataBase.products,newprod)
+            refreshImpressions();
+          };
+      </script>
+
+    <br><br><br><br>
+
+    <section id="impressionSection">
+
+      <button id="refreshImpressios" onclick="refreshImpressions()">Atualizar listagem</button>
+
+      <br><br>
+
+      <div id="productsList" style="float:left;">
+        <!-- os produtos serão impressos aqui!!!-->
+      </div>
+
+
+      <script>
+          function refreshImpressions() { //ToDo: altere para a sua versão pelo console
+            
+            var prodListDiv = document.querySelector("#productsList");
+            prodListDiv.innerHTML = Object.values(prodDataBase.products).map(function(prod) {
+              return [
+                `<a href="${prod.productURL}" class="prod_link">`,
+                `  <span class="prod_box">`,
+                `    <img src="${prod.imageURL}" alt="${prod.name}" height="200" width="200">`,
+                `    <h2>${prod.name}</h2>`,
+                `    <h3>Preço: R$ ${prod.price}</h3>`,
+                `  </span>`,
+                `</a>`
+              ].join("\n");
+            }).join("\n<br>\n")
+
+          };
+          refreshImpressions();
+      </script>
+
+    </section>
+    
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TZRHVZC"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  </body>
+
+</html>
